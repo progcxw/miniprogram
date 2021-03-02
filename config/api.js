@@ -1,5 +1,5 @@
 const ApiRootUrl = 'http://81.71.134.143:8360/api/';
-const WebSocktUrl = 'ws://81.71.134.143:8361/'
+const WebSocktUrl = 'ws://81.71.134.143:8360/ws/'
 
 module.exports = {
   IndexUrl: ApiRootUrl + 'index/index', //首页数据接口
@@ -7,6 +7,9 @@ module.exports = {
   CatalogCurrent: ApiRootUrl + 'catalog/current',  //分类目录当前分类数据接口
 
   PostCateList: ApiRootUrl + 'post/category', //发布商品时选择分类
+  PostPic: ApiRootUrl + 'post/pic', //上传图片
+  PostLocation: ApiRootUrl + 'post/location', //上传所在城市的地址信息
+  GoodsPost: ApiRootUrl + 'post/goods', //发布商品
 
   AuthLoginByWeixin: ApiRootUrl + 'auth/loginByWeixin', //微信登录
 
@@ -17,6 +20,8 @@ module.exports = {
   GoodsNew: ApiRootUrl + 'goods/new',  //新品
   GoodsHot: ApiRootUrl + 'goods/hot',  //热门
   GoodsRelated: ApiRootUrl + 'goods/related',  //商品详情页的关联商品（大家都在看）
+
+  PostGoodsDetail: ApiRootUrl + 'post_goods/detail', //二手商品详细信息
 
   CartList: ApiRootUrl + 'cart/index', //获取购物车的数据
   CartAdd: ApiRootUrl + 'cart/add', // 添加商品到购物车
@@ -56,9 +61,14 @@ module.exports = {
   FootprintList: ApiRootUrl + 'footprint/list',  //足迹列表
   FootprintDelete: ApiRootUrl + 'footprint/delete',  //删除足迹
 
+  //talking sheets
+  SheetsIndex: ApiRootUrl + 'sheets/index',
+  SheetsMsg: ApiRootUrl + 'sheets/message',
+
   //消息
   ChatIndex: ApiRootUrl + 'chat/index', //消息一览
   ChatForm: ApiRootUrl + 'chat/form', //消息框
   ChatFlushUnread: ApiRootUrl + 'chat/flushUnread', //把所有未读设为已读
-  ChatWs: WebSocktUrl + 'ws', //消息WebSocket连接
+  ChatWs: WebSocktUrl + 'open', //消息WebSocket连接
+  ChatOpen: ApiRootUrl + "chat/open", //与seller开启聊天
 };

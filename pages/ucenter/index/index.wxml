@@ -17,14 +17,14 @@
     </view>
 
     <view class="item">
-      <navigator url="/pages/ucenter/cart/cart" class="a">
-        <image class='icon' src='/static/images/cart.png'></image>
-        <text class="txt">购物车</text>
+      <navigator url="/pages/ucenter/about/about" class="a">
+        <image class="icon" src='/static/images/outbox.png'></image>
+        <text class="txt">about</text>
       </navigator>
     </view>
 
     <view class="item no-border">
-      <navigator url="url" class="a">
+      <navigator url="/pages/ucenter/posted/posted" class="a">
         <image class="icon" src='/static/images/demostration.png'></image>
         <text class="txt">我发布的</text>
       </navigator>
@@ -41,12 +41,7 @@
         <text class="txt">我的订单</text>
       </navigator>
     </view>
-    <view class="item">
-      <navigator url="/pages/ucenter/footprint/footprint" class="a">
-        <image class="icon" src='/static/images/foot.png'></image>
-        <text class="txt">我的足迹</text>
-      </navigator>
-    </view>
+
     <view class="item">
       <navigator url="../address/address" class="a">
         <image class="icon" src='/static/images/maps-and-flags.png'></image>
@@ -54,15 +49,16 @@
       </navigator>
     </view>
     <view class="item">
-      <navigator url="url" class="a">
-        <text class="icon security"></text>
+      <navigator url="../identify/identify" class="a">
+        <image class="icon" src='/static/images/identify.png'></image>
         <text class="txt">身份认证</text>
       </navigator>
     </view>
+
     <view class="item">
-      <navigator url="/pages/ucenter/about/about" class="a">
-        <image class="icon" src='/static/images/embarrass.png'></image>
-        <text class="txt">talking sheets</text>
+      <navigator url="/pages/ucenter/cart/cart" class="a">
+        <image class='icon' src='/static/images/cart.png'></image>
+        <text class="txt">购物车</text>
       </navigator>
     </view>
 

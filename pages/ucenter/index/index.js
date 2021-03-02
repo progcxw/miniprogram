@@ -1,6 +1,7 @@
 const util = require('../../../utils/util.js');
 const api = require('../../../config/api.js');
 const user = require('../../../services/user.js');
+const websocket = require('../../../services/websocket.js');
 const app = getApp();
 
 Page({
@@ -52,6 +53,7 @@ Page({
   },
 
   onWechatLogin(e) {
+    let that = this;
     if (e.detail.errMsg !== 'getUserInfo:ok') {
       if (e.detail.errMsg === 'getUserInfo:fail auth deny') {
         return false
@@ -74,6 +76,7 @@ Page({
         })
         return false;
       }
+
       // 设置用户信息
       this.setData({
         userInfo: res.data.userInfo,
@@ -81,10 +84,12 @@ Page({
       });
       app.globalData.userInfo = res.data.userInfo;
       app.globalData.token = res.data.token;
-      wx.setStorageSync('userInfo', JSON.stringify(res.data.userInfo));
+      wx.setStorageSync('userInfo', res.data.userInfo);
       wx.setStorageSync('token', res.data.token);
+
+      websocket.wsConnect();
     }).catch((err) => {
-      console.log(err)
+      console.log("something wrong happen:", err)
     })
   },
 

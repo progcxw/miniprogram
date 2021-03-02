@@ -6,6 +6,9 @@ var SocketTask
 var socketOpen = false
 var badge = 0
 
+function isWsConnected() {
+  return socketOpen
+}
 
 /**
  * 创建websocket连接
@@ -13,20 +16,22 @@ var badge = 0
 function wsConnect() {
 
   let that = this
-  let userInfo = wx.getStorageSync('userInfo')
+
   // 创建Socket
   return new Promise(function(resolve, reject) {
+    let userInfo = wx.getStorageSync('userInfo')
     if (!userInfo){
       reject("未登录")
     }
-    var openId = userInfo.openId
+
+    var id = userInfo.id
     SocketTask = wx.connectSocket({
-      url: api.ChatWs + '/' + openId,
+      url: api.ChatWs + '?id=' + id,
       header: {
         'content-type': 'application/json',
         'Authorization': wx.getStorageSync('token')
       },
-      method: 'post',
+      method: 'get',
       success: function(res) {
         console.log('WebSocket连接创建', res)
         listenBadge()
@@ -35,7 +40,7 @@ function wsConnect() {
         wx.showToast({
           title: '网络异常！',
         })
-        console.log("err")
+        console.log("err: ", err)
         reject("网络异常！")
       },
     })

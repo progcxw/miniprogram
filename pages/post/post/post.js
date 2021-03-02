@@ -7,26 +7,14 @@ Page({
     desc: '',
     title: '',
     price: '',
-    marketPrice: '',
     isPostageFree: false,
     postage: null,
-    ableSelfTake: false,
-    ableMeet: false,
-    ableExpress: false,
     imgList: [],
     tmpImgList:[],
-    categoryList: [],
-    currentCategory: {},
-    selectCategoryList: [
-      { id: 0, name: '大类', parent_id: 0},
-      { id: 0, name: '细分种类', parent_id: 1},
-    ],
-    selectCategoryDone: false,
-    openSelectCategory: false,
   },
   onLoad: function(options) {
     var that = this;
-    user.checkLoginAndNav()
+    user.checkLogin()
   },
   onClose() {
     wx.navigateBack({
@@ -75,25 +63,26 @@ Page({
 
     })
   },
-  uploadFile(url, i) {
+  uploadFile(path, i) {
     let that = this;
     wx.uploadFile({
-      url: 'https://81.71.134.143/api/upload/upload',
-      filePath: url,
-      name: url,
+      url: api.PostPic,
+      filePath: path,
+      name: 'file',
       success(res) {
         const data = JSON.parse(res.data);
 
         console.log(data)
-        if (data.code == 'success') {
-          console.log("图片上传成功, " + data.data.url)
-          that.data.imgList[i] = data.data.url
+        if (data.data.code == 0) {
+          console.log("图片上传成功, " + data.data.filesha1)
+          that.data.imgList[i] = data.data.filesha1
           that.setData({
             imgList: that.data.imgList
           })
+          console.log(that.data.imgList)
           // that.onLoad();
 
-        } else if (data.code == 'error' && data.msg == 'File is too large.') {
+        } else if (data.data.code != 0 && data.data.msg == 'File is too large.') {
           console.log("上传失败,图片太大")
           that.compressImg(url, i)
         }
@@ -166,10 +155,6 @@ Page({
       util.showErrorToast('请上传图片')
       return;
     }
-    if (this.data.cateName.trim() == '') {
-      util.showErrorToast('请选择分类')
-      return;
-    }
 
     let reg1 = /^[0-9]+(.[0-9]{1,})?$/;
     let reg2 = /^[0-9]+(.[0-9]{1,2})?$/;
@@ -180,28 +165,21 @@ Page({
     }
 
     let postage = this.data.postage == null ? '0.00' : this.data.postage
-    this.setData({
-      marketPrice: this.data.marketPrice == '' ? '0' : this.data.marketPrice
-    })
 
-    if (!reg1.test(this.data.price) || !reg1.test(this.data.marketPrice) || !reg1.test(postage)) {
+    if (!reg1.test(this.data.price) || !reg1.test(postage)) {
       util.showErrorToast('价格必须是数字')
       return;
     }
-    if (!reg2.test(this.data.price) || !reg2.test(this.data.marketPrice) || !reg2.test(postage)) {
+    if (!reg2.test(this.data.price) || !reg2.test(postage)) {
       util.showErrorToast('小数必须是最大2位')
       return;
     }
-    if (parseFloat(this.data.price) >= 100000000 || parseFloat(this.data.marketPrice) >= 100000000) {
+    if (parseFloat(this.data.price) >= 100000000) {
       util.showErrorToast("必须在0到1亿元之间")
       return;
     }
     if (parseFloat(postage) > 1000) {
       util.showErrorToast("邮费最大1千元")
-      return;
-    }
-    if (!this.data.ableSelfTake && !this.data.ableMeet && !this.data.ableExpress) {
-      util.showErrorToast("请选择交易方式")
       return;
     }
 
@@ -214,19 +192,17 @@ Page({
     }
 
     let that = this
-    user.checkLoginAndNav().then(() => {
+    //user.checkLogin().then(() => {
       util.request(api.GoodsPost, {
         name: this.data.title,
         desc: this.data.desc,
         price: this.data.price,
-        marketPrice: this.data.marketPrice,
         postage: postage,
-        ableSelfTake: this.data.ableSelfTake,
-        ableMeet: this.data.ableMeet,
-        ableExpress: this.data.ableExpress,
         images: this.data.imgList,
+        user_id: wx.getStorageInfoSync("userinfo").id,
       }, 'POST').then(function(res) {
-        if (res.errno === 0) {
+        console.log(that.data)
+        if (res.errno == 0) {
 
           setTimeout(function goback() {
             wx.reLaunch({
@@ -238,160 +214,8 @@ Page({
             title: '发布成功'
           })
         }
-
-        console.log(res)
-      });
     })
 
-  },
-  getCategory: function () {
-    //CatalogList
-    let that = this;
-    wx.showLoading({
-      title: '加载中...',
-    });
-    util.request(api.CatalogList).then(function (res) {
-        that.setData({
-           categoryList: res.data.categoryList,
-           currentCategory: res.data.currentCategory
-        });
-        wx.hideLoading();
-      });
-  },
-  getCurrentCategory: function (id) {
-    let that = this;
-        util.request(api.CatalogCurrent, { id: id })
-        .then(function (res) {
-          that.setData({
-            currentCategory: res.data.currentCategory
-          });
-        });
-  },
-   getList: function () {
-      var that = this;
-      util.request(api.ApiRootUrl + 'api/catalog/' + that.data.currentCategory.cat_id)
-        .then(function (res) {
-          that.setData({
-            categoryList: res.data,
-          });
-        });
-    },
-    setCategoryDoneStatus() {
-      let that = this;
-      let doneStatus = that.data.selectCategoryList.every(item => {
-        return item.id != 0;
-      });
-  
-      that.setData({
-        selectCategoryDone: doneStatus
-      })
-  
-    },
-  chooseCategory() {
-    let that = this;
-    this.getCategory();
-    this.setData({
-      openSelectCategory: !this.data.openSelectCategory
-    });
-
-    this.setData({
-      selectCategoryList: [
-          { id: 0, name: '大类', parent_id: 0},
-          { id: 0, name: '细分种类', parent_id: 1},
-        ],
-      })
-
-    this.setCategoryDoneStatus();
-  },
-  selectCategory(event) {
-    let that = this;
-    let levelIndex = event.target.dataset.index;
-
-    let curCate = this.data.categoryList[levelIndex]
-    var index = 0
-    if(curCate.parent_id != 0) {
-      index = 1
-    }
-
-    let selectCategoryList = this.data.selectCategoryList
-    selectCategoryList[index].id = curCate.id
-    selectCategoryList[index].name = curCate.name
-    selectCategoryList[index].parent_id = curCate.parent_id
-
-    this.setData({
-      selectCategoryList: selectCategoryList
-    })
-
-    console.log(this.data.selectCategoryList)
-    this.getCurrentCategory(curCate.id)
-    this.setData({
-      categoryList: this.data.currentCategory.subCategoryList
-    })
-/*
-    this.getCurrentCategory(selectCategory[0].id)
-
-    let categoryItem = this.data.categoryList[levelIndex];
-    let cateLevel = categoryItem.id == 0 ? 1 : 2;
-    let selectCategoryList = this.data.selectCategoryList;
-    selectCategoryList[cateLevel - 1] = categoryItem;
-
-
-    if (cateLevel != 2) {
-      this.setData({
-        selectCategoryList: selectCategoryList,
-        cateLevel: cateLevel + 1
-      })
-      this.getCurrentCategory(categoryItem.id);
-    } else {
-      this.setData({
-        selectCategoryList: selectCategoryList
-      })
-    }
-
-    //重置下级区域为空
-    selectCategoryList.map((item, index) => {
-      if (index > cateLevel - 1) {
-        item.id = 0;
-        item.name = '细分种类';
-        item.parent_id = 0;
-      }
-      return item;
-    });
-
-    this.setData({
-      selectCategoryList: selectCategoryList
-    })
-
-
-    that.setData({
-      categoryList: that.data.categoryList.map(item => {
-
-        //标记已选择的
-        if (that.data.cateLevel == cateLevel && that.data.selectCategoryList[that.data.cateLevel - 1].id == item.id) {
-          item.selected = true;
-        } else {
-          item.selected = false;
-        }
-
-        return item;
-      })
-    });
-
-    this.setRegionDoneStatus();
-*/
-  },
-  selectCategoryLevel(event) {
-    let that = this;
-    let cateLevelIndex = event.target.dataset.index;
-    let selectCategoryList = that.data.selectCategoryList;
-
-    //判断是否可点击
-    if (cateLevelIndex - 1 >= 0 && selectCategoryList[cateLevelIndex-1].id <= 0) {
-      return false;
-    }
-    
-    let selectCategoryItem = selectCategoryList[cateLevelIndex];
-    this.getCategory()
   },
   bindInputDesc(event) {
     this.setData({
@@ -435,31 +259,6 @@ Page({
       })
     }
     console.log(event.detail.value[0])
-  },
-  trade(event) {
-    this.setData({
-      ableSelfTake: false,
-      ableMeet: false,
-      ableExpress: false,
-    })
-    for (let i in event.detail.value) {
-      console.log(event.detail.value[i])
-      if (event.detail.value[i] == 'ableSelfTake') {
-        this.setData({
-          ableSelfTake: true,
-        })
-      } else if (event.detail.value[i] == 'ableMeet') {
-        this.setData({
-          ableMeet: true,
-        })
-      } else if (event.detail.value[i] == 'ableExpress') {
-        this.setData({
-          ableExpress: true,
-        })
-      }
-    };
-
-    console.log(event.detail)
   },
   onReady: function() {
 

@@ -12,7 +12,6 @@ Page({
   },
   onLoad: function(options) {
     // 页面初始化 options为页面跳转所带来的参数
-
   },
   onReady: function() {
     // 页面渲染完成
@@ -47,9 +46,10 @@ Page({
     }).then(function(res) {
       if (res.errno === 0) {
         console.log(res.data);
+
         that.setData({
           chatList: that.data.chatList.concat(res.data.chats),
-          offsetTime: res.data.offsetTime
+          offsetTime: res.data.offset_time
         });
       } else {
         console.log(res)

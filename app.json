@@ -1,19 +1,27 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/talksheet/talksheet",
     "pages/chat/chatIndex/chatIndex",
     "pages/post/post/post",
+    "pages/postgoods/postgoods",
     "pages/catalog/catalog",
     "pages/newGoods/newGoods",
     "pages/ucenter/address/address",
+    "pages/ucenter/identify/identify",
     "pages/ucenter/addressAdd/addressAdd",
     "pages/ucenter/footprint/footprint",
     "pages/ucenter/order/order",
     "pages/ucenter/orderDetail/orderDetail",
     "pages/ucenter/express/express",
     "pages/ucenter/feedback/feedback",
-    "pages/ucenter/index/index",
+    "pages/ucenter/income/income",
     "pages/ucenter/collect/collect",
+    "pages/ucenter/index/index",
+    "pages/ucenter/bought/bought",
+    "pages/ucenter/sold/sold",
+    "pages/ucenter/posted/posted",
+    "pages/ucenter/about/about",
     "pages/auth/login/login",
     "pages/auth/register/register",
     "pages/auth/reset/reset",
@@ -29,10 +37,15 @@
     "pages/shopping/addressAdd/addressAdd",
     "pages/goods/goods"
   ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于展示同城商品"
+    }
+  },
   "window": {
     "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "敲你吗",
+    "navigationBarTitleText": "ExStuff",
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": true
   },
@@ -46,13 +59,13 @@
         "pagePath": "pages/index/index",
         "iconPath": "static/images/ic_menu_home_nor.png",
         "selectedIconPath": "static/images/ic_menu_home_pressed.png",
-        "text": "首页"
+        "text": "二手"
       },
       {
-        "pagePath": "pages/catalog/catalog",
-        "iconPath": "static/images/ic_menu_cate_nor.png",
-        "selectedIconPath": "static/images/ic_menu_cate_pressed.png",
-        "text": "分类"
+        "pagePath": "pages/talksheet/talksheet",
+        "iconPath": "static/images/embarrass_unpressed.png",
+        "selectedIconPath": "static/images/embarrass.png",
+        "text": "talking sheets"
       },
       {
         "pagePath": "pages/post/post/post",

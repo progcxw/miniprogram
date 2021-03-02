@@ -14,13 +14,13 @@
       <view wx:for="{{imgList}}" wx:key="{{index}}">
 
         <view wx:if="{{imgList[index] == 'false'}}">
-          <!-- 上传中 -->
+
           <view class='add blur' style="background-image: url('{{tmpImgList[index]}}')">
             <image class='loading' src='/static/images/loading.png'></image>
           </view>
         </view>
         <view wx:else>
-          <!-- 完成上传 -->
+
           <view class='add'>
             <image class="delete" src="/static/images/delete.png" bindtap='removeImg' data-index='{{index}}'></image>
 
@@ -60,34 +60,10 @@
         </label>
       </checkbox-group>
     </view>
-    <view class="element">
-      <view class="lable">分类</view>
-
-      <view class="cate">
-
-        <input class="input" value="{{full_category}}" disabled="true" bindtap="chooseCategory" placeholder="选择分类"/>
-      </view>
-      <image background-size="cover" class="i" src="/static/images/address_right.png"></image>
-    </view>
-
-
   </view>
-
-  <view class="category-select" wx:if="{{openSelectCategory}}">
-      <view class="hd">
-        <view class="category-selected">
-          <view class="item {{item.id == 0 ? 'disabled' : ''}} {{(cateLevel -1) === index ? 'selected' : ''}}" bindtap="selectCategoryLevel" data-index="{{index}}" wx:for="{{selectCategoryList}}" wx:key="{{item.id}}">{{item.name}}</view>
-        </view>
-        <view class="done {{selectCategoryDone ? '' : 'disabled'}}" bindtap="doneSelectCategory">确定</view>
-      </view>
-      <view class="bd">
-        <view class="category-list">
-          <view class="item {{item.selected ? 'selected' : ''}}" wx:for="{{categoryList}}"  data-id="{{item.id}}" data-index="{{index}}" bindtap="selectCategory">{{item.name}}</view>
-        </view>
-      </view>
-    </view>
 
   <view class="bottom-btn">
     <button class="r" bindtap='onPost'>确认发布</button>
   </view>
 </view>
+<view class="bg-mask" bindtap="cancelSelectCategory" wx:if="{{openSelectCategory}}"></view>

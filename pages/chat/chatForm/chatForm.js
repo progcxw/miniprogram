@@ -11,16 +11,16 @@ Page({
    */
   data: {
     id: 0,
-    historyList: [],
-    otherSide: {},
+    history_list: [],
+    other_side: {},
     goods: {},
-    isU1: false,
-    myAvatar: '',
-    scrollTop: 0,
-    offsetTime: null,
+    is_u1: false,
+    my_avatar: '',
+    scroll_top: 0,
+    offset_time: null,
     size: 10,
-    scrollHeight: 0,
-    noMore: false,
+    scroll_height: 0,
+    no_more: false,
     input: '',
     typing: '',
   },
@@ -31,9 +31,9 @@ Page({
   onLoad: function(options) {
     let now = new Date();
     this.setData({
-      id: options.id,
-      myAvatar: wx.getStorageSync('userInfo').avatarUrl,
-      offsetTime: now.toISOString()
+      id: Number(options.id),
+      my_avatar: wx.getStorageSync('userInfo').avatar,
+      offset_time: now.toISOString()
     })
 
     this.getHistory();
@@ -43,49 +43,49 @@ Page({
 
   getHistory: function() {
     let that = this;
-    util.request(api.ChatForm + '/' + this.data.id, {
-      offsetTime: this.data.offsetTime,
+    util.request(api.ChatForm + '?chat_id=' + this.data.id, {
+      offset_time: this.data.offset_time,
       size: this.data.size
     }).then(function(res) {
       if (res.errno === 0) {
         console.log(res.data);
         
         that.setData({
-          otherSide: res.data.otherSide,
-          historyList: res.data.historyList.concat(that.data.historyList),
+          other_side: res.data.other_side,
+          history_list: res.data.history_list.concat(that.data.history_list),
           goods: res.data.goods,
-          isU1: res.data.isU1,
-          offsetTime: res.data.offsetTime+"",
+          is_u1: res.data.is_u1,
+          offset_time: res.data.offset_time+"",
         });
         
-        if (res.data.historyList.length < that.data.size) {
+        if (res.data.history_list.length < that.data.size) {
           that.setData({
-            noMore: true
+            no_more: true
           })
         }
-        if (that.data.historyList.length < 11) {
+        if (that.data.history_list.length < 11) {
           //首次加载
           wx.setNavigationBarTitle({
-            title: that.data.otherSide.nickName
+            title: that.data.other_side.nick_name
           })
 
           let _this = that
           that.getScrollHeight().then((res) => {
-            var scroll = res - _this.data.scrollHeight
+            var scroll = res - _this.data.scroll_height
             _this.setData({
-              scrollTop: 5000,
-              scrollHeight: res,
+              scroll_top: 5000,
+              scroll_height: res,
             })
           })
 
         } else {
-          //重新设置scroll,scrollTop = 之前的scrollHeigth - 加入了数据后的scrollHeigth
+          //重新设置scroll,scroll_top = 之前的scrollHeigth - 加入了数据后的scrollHeigth
           let _this = that
           that.getScrollHeight().then((res) => {
-            var scroll = res - _this.data.scrollHeight
+            var scroll = res - _this.data.scroll_height
             _this.setData({
-              scrollTop: scroll,
-              scrollHeight: res,
+              scroll_top: scroll,
+              scroll_height: res,
             })
           })
 
@@ -99,11 +99,11 @@ Page({
     let that = this
     websocket.listenChatForm(this.data.id).then(res => {
       var newHistory = [{
-        chatId: res.chatId,
-        u1ToU2: res.senderId < res.receiverId ? true : false,
-        messageType: res.messageType,
-        messageBody: res.messageBody,
-        sendTime: res.sendTime,
+        chat_id: res.chat_id,
+        u1_to_u2: res.senderId < res.receiverId ? true : false,
+        message_type: res.message_type,
+        message_body: res.message_body,
+        send_time: res.send_time,
       }]
       that.addHistoryList(newHistory)
       that.openListen()
@@ -112,12 +112,12 @@ Page({
   toGoods: function(event) {
     let goodsId = event.target.dataset.id;
     wx.navigateTo({
-      url: '/pages/goods/goods?id=' + goodsId,
+      url: '/pages/postgoods/postgoods?id=' + goodsId,
     });
   },
   more: function() {
     console.log("到顶加载更多")
-    if (!this.data.noMore) {
+    if (!this.data.no_more) {
       this.getHistory()
     }
   },
@@ -129,7 +129,7 @@ Page({
       query.select('#hei').boundingClientRect()
       query.selectViewport().scrollOffset()
       query.exec(function(res) {
-        console.log("ScrollHeight " + res[0].top)
+        console.log("Scroll_height " + res[0].top)
         resolve(res[0].top);
       })
     });
@@ -155,13 +155,14 @@ Page({
     //通过webSocket发送消息
     websocket.sendMessage(data).then(res => {
       console.log(res)
+      console.log(this.data.other_side.user_id)
 
       var newHistory = [{
-        chatId: this.data.id,
-        u1ToU2: wx.getStorageSync('userInfo').openId < this.data.otherSide.openId ? true : false,
-        messageType: 1,
-        messageBody: input,
-        sendTime: util.formatTime(new Date()),
+        chat_id: this.data.id,
+        u1_to_u2: wx.getStorageSync('userInfo').id > this.data.other_side.user_id ? true : false,
+        message_type: 1,
+        message_body: input,
+        send_time: util.formatTime(new Date()),
       }]
 
       that.addHistoryList(newHistory)
@@ -173,41 +174,44 @@ Page({
     });
 
   },
-  addHistoryList: function(historyList) {
+  addHistoryList: function(history_list) {
     //把新的数据加入目前的对话框
-    var newHistoryList = this.data.historyList.concat(historyList)
+    var newHistoryList = this.data.history_list.concat(history_list)
     this.setData({
-      historyList: newHistoryList,
+      history_list: newHistoryList,
     })
 
 
     //重新设置scroll
     let _this = this
     this.getScrollHeight().then((res) => {
-      var scroll = res - _this.data.scrollHeight
+      var scroll = res - _this.data.scroll_height
       _this.setData({
-        scrollTop: 100000000,
-        scrollHeight: res,
+        scroll_top: 100000000,
+        scroll_height: res,
       })
     })
   },
   createMsg: function() {
     var msgType;
   
-    if (this.data.historyList.length>1) {
+    if (this.data.history_list.length>1) {
       msgType = 1
     } else {
       msgType = 3
     }
 
     var data = JSON.stringify({
-      chatId: this.data.id,
-      receiverId: this.data.otherSide.openId,
-      senderId: wx.getStorageSync('userInfo').openId,
-      goodsId: this.data.goods.id,
-      messageType: msgType,
-      messageBody: this.data.input
+      chat_id: this.data.id,
+      sender_id: wx.getStorageSync('userInfo').id,
+      receiver_id: this.data.other_side.user_id,
+      goods_id: this.data.goods.id,
+      message_type: msgType,
+      message_body: this.data.input,
+      send_time: 0
     })
+
+    console.log("message: ", data)
     return data
   },
   buy:function(){

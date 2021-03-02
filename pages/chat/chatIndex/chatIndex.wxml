@@ -12,25 +12,25 @@
 
   <view class="result-list" wx:if="{{chatList.length > 0}}">
 
-    <view class="chat" bindtap='navForm' data-id='{{item.lastChat.chatId}}' data-index='{{index}}' wx:for="{{chatList}}" wx:key="{{index}}">
+    <view class="chat" bindtap='navForm' data-id='{{item.last_chat.chat_id}}' data-index='{{index}}' wx:for="{{chatList}}" wx:key="{{index}}">
       <view class="item">
         <view class='avatar-item'>
-          <image class="avatar" mode='aspectFill' src="{{item.otherSide.avatarUrl}}"></image>
+          <image class="avatar" mode='aspectFill' src="{{item.other_side.avatar_url}}"></image>
 
-          <view class='badge' wx:if="{{item.unreadCount}}">
-            <text class=' num'>{{item.unreadCount}}</text>
+          <view class='badge' wx:if="{{item.unread_count}}">
+            <text class=' num'>{{item.unread_count}}</text>
           </view>
         </view>
         <view class="info">
           <view class="t">
-            <text class="name">{{item.otherSide.nickName}}</text>
+            <text class="name">{{item.other_side.nick_name}}</text>
           </view>
-          <view class="time">{{item.lastChat.sendTime}}</view>
+
           <view class="b">
-            <text class="chat-msg">{{item.lastChat.messageBody}}</text>
+            <text class="chat-msg">{{item.last_chat.message_body}}</text>
           </view>
         </view>
-        <image class="img" mode='aspectFill' src="{{item.goods.primaryPicUrl}}"></image>
+        <image class="img" mode='aspectFill' src="{{item.simple_goods.primary_pic_url}}"></image>
       </view>
     </view>
 

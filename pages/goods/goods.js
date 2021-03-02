@@ -26,40 +26,43 @@ Page({
   },
   getGoodsInfo: function () {
     let that = this;
-    util.request(api.GoodsDetail, { id: that.data.id }).then(function (res) {
-      if (res.errno === 0) {
-        that.setData({
-          goods: res.data.info,
-          gallery: res.data.gallery,
-          attribute: res.data.attribute,
-          issueList: res.data.issue,
-          comment: res.data.comment,
-          brand: res.data.brand,
-          specificationList: res.data.specificationList,
-          productList: res.data.productList,
-          userHasCollect: res.data.userHasCollect
-        });
+      util.request(api.GoodsDetail, {
+        id: that.data.id
+      }).then(function (res) {
+        if (res.errno === 0) {
+          that.setData({
+            goods: res.data.info,
+            gallery: res.data.gallery,
+            attribute: res.data.attribute,
+            issueList: res.data.issue,
+            comment: res.data.comment,
+            brand: res.data.brand,
+            specificationList: res.data.specificationList,
+            productList: res.data.productList,
+            userHasCollect: res.data.userHasCollect
+          });
 
-        if (res.data.userHasCollect == 1) {
-          that.setData({
-            'collectBackImage': that.data.hasCollectImage
-          });
-        } else {
-          that.setData({
-            'collectBackImage': that.data.noCollectImage
-          });
+          if (res.data.userHasCollect == 1) {
+            that.setData({
+              'collectBackImage': that.data.hasCollectImage
+            });
+          } else {
+            that.setData({
+              'collectBackImage': that.data.noCollectImage
+            });
+          }
+
+          WxParse.wxParse('goodsDetail', 'html', res.data.info.goods_desc, that);
+
+          that.getGoodsRelated();
         }
-
-        WxParse.wxParse('goodsDetail', 'html', res.data.info.goods_desc, that);
-
-        that.getGoodsRelated();
-      }
-    });
-
+      });
   },
   getGoodsRelated: function () {
     let that = this;
-    util.request(api.GoodsRelated, { id: that.data.id }).then(function (res) {
+    util.request(api.GoodsRelated, {
+      id: that.data.id
+    }).then(function (res) {
       if (res.errno === 0) {
         that.setData({
           relatedGoods: res.data.goodsList,
@@ -224,7 +227,10 @@ Page({
   addCannelCollect: function () {
     let that = this;
     //添加或是取消收藏
-    util.request(api.CollectAddOrDelete, { typeId: 0, valueId: this.data.id }, "POST")
+    util.request(api.CollectAddOrDelete, {
+        typeId: 0,
+        valueId: this.data.id
+      }, "POST")
       .then(function (res) {
         let _res = res;
         if (_res.errno == 0) {
@@ -295,7 +301,11 @@ Page({
       }
 
       //添加到购物车
-      util.request(api.CartAdd, { goodsId: this.data.goods.id, number: this.data.number, productId: checkedProduct[0].id }, "POST")
+      util.request(api.CartAdd, {
+          goodsId: this.data.goods.id,
+          number: this.data.number,
+          productId: checkedProduct[0].id
+        }, "POST")
         .then(function (res) {
           let _res = res;
           if (_res.errno == 0) {
